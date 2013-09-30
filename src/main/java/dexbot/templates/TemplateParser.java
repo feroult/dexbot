@@ -1,7 +1,9 @@
-package dexbot;
+package dexbot.templates;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
@@ -9,7 +11,7 @@ public class TemplateParser {
 
 	private String template;
 
-	public TemplateParser(String template) {
+	private TemplateParser(String template) {
 		this.template = template;
 	}
 
@@ -32,4 +34,16 @@ public class TemplateParser {
 		return writer.toString();
 	}
 
+	public static TemplateParser fromResource(String name) {
+		try {
+			String template = FileUtils.readFileToString(FileUtils.toFile(TemplateParser.class.getResource(name)));
+			return new TemplateParser(template);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static TemplateParser fromString(String template) {
+		return new TemplateParser(template);
+	}
 }
