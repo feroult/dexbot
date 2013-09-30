@@ -5,11 +5,11 @@ import java.io.StringWriter;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
-public class TemplateWrapper {
+public class TemplateParser {
 
 	private String template;
 
-	public TemplateWrapper(String template) {
+	public TemplateParser(String template) {
 		this.template = template;
 	}
 
