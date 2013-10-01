@@ -79,7 +79,7 @@
 		</resources>
 
 		<plugins>
-			<plugin>
+			<!--plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>1.7</version>
@@ -111,7 +111,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -137,14 +137,14 @@
 							<targetPath>WEB-INF</targetPath>
 						</resource>
 						<!-- GAPI key -->
-						<resource>
+						<!--resource>
 							<directory>${gapi.service.account.key.dir}</directory>
 							<includes>
 								<include>${gapi.service.account.key.file}</include>
 							</includes>
 							<filtering>false</filtering>
 							<targetPath>WEB-INF/classes</targetPath>
-						</resource>
+						</resource-->
 					</webResources>
 				</configuration>
 			</plugin>
