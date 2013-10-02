@@ -1,8 +1,11 @@
 package dexbot.repository;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import br.com.ez.DJ;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -11,8 +14,11 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import dexbot.domain.Template;
+import dexbot.utils.URLUtils;
 
 public class TemplateRepository {
 
@@ -95,6 +101,21 @@ public class TemplateRepository {
 			return (String) entity.getProperty("base");
 		} catch (EntityNotFoundException e) {
 			return null;
+		}
+	}
+
+	public String mergeTemplate(Template template) {
+
+		try {
+			URL url = new URL(template.getServiceUrl());
+			String jsonString = URLUtils.readAsString(url);
+
+			JsonElement jsonElement = new JsonParser().parse(jsonString);
+
+			return new DJ().template(template.getTemplate()).context(jsonElement).result();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
