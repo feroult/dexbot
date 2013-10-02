@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 
 import dexbot.domain.Template;
@@ -74,6 +75,27 @@ public class TemplateRepository {
 		template.setServiceUrl(serviceUrl);
 		template.setTemplate(templateStr);
 		return template;
+	}
+
+	public void saveBase(String base) {
+		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+		Key key = KeyFactory.createKey("template_base", "BASE");
+		Entity entity = new Entity(key);
+		entity.setProperty("base", base);
+		datastoreService.put(entity);
+	}
+
+	public String findBase() {
+		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+		Key key = KeyFactory.createKey("template_base", "BASE");
+
+		try {
+			Entity entity = datastoreService.get(key);
+			return (String) entity.getProperty("base");
+		} catch (EntityNotFoundException e) {
+			return null;
+		}
 	}
 
 }

@@ -32,7 +32,7 @@ public class TemplateRepositoryTest {
 	}
 
 	@Test
-	public void testSaveAndFind() {
+	public void testSaveAndFindTemplate() {
 		Template template = new Template();
 		template.setServiceUrl("http://someservice.com");
 		template.setTemplate("<engine selector='.header'><h1>{{=it.header}}</h1><engine>");
@@ -79,5 +79,14 @@ public class TemplateRepositoryTest {
 		template = result.get(1);
 		assertEquals("http://someotherservice.com", template.getServiceUrl());
 		assertEquals("<engine selector='.footer'><h1>{{=it.header}}</h1><engine>", template.getTemplate());
+	}
+
+	@Test
+	public void testSaveAndFindBase() {
+		TemplateRepository repository = new TemplateRepository();
+		repository.saveBase("<html><head><body>Hello dexbot!</body></head></html>");
+
+		String base = repository.findBase();
+		assertEquals("<html><head><body>Hello dexbot!</body></head></html>", base);
 	}
 }
