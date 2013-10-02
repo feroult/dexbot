@@ -45,7 +45,7 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-		
+
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>com.google.appengine</groupId>
@@ -65,6 +65,16 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>br.com.ez</groupId>
+			<artifactId>dj</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -79,39 +89,15 @@
 		</resources>
 
 		<plugins>
-			<!--plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>gapi-key-dir-regex-property</id>
-						<goals>
-							<goal>regex-property</goal>
-						</goals>
-						<configuration>
-							<name>gapi.service.account.key.dir</name>
-							<value>${gapi.service.account.key}</value>
-							<regex>^(.*)\/([^\/]*)$</regex>
-							<replacement>$1</replacement>
-							<failIfNoMatch>true</failIfNoMatch>
-						</configuration>
-					</execution>
-					<execution>
-						<id>gapi-key-file-regex-property</id>
-						<goals>
-							<goal>regex-property</goal>
-						</goals>
-						<configuration>
-							<name>gapi.service.account.key.file</name>
-							<value>${gapi.service.account.key}</value>
-							<regex>^(.*)\/([^\/]*)$</regex>
-							<replacement>$2</replacement>
-							<failIfNoMatch>true</failIfNoMatch>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin-->
+			<!--plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+				<version>1.7</version> <executions> <execution> <id>gapi-key-dir-regex-property</id> 
+				<goals> <goal>regex-property</goal> </goals> <configuration> <name>gapi.service.account.key.dir</name> 
+				<value>${gapi.service.account.key}</value> <regex>^(.*)\/([^\/]*)$</regex> 
+				<replacement>$1</replacement> <failIfNoMatch>true</failIfNoMatch> </configuration> 
+				</execution> <execution> <id>gapi-key-file-regex-property</id> <goals> <goal>regex-property</goal> 
+				</goals> <configuration> <name>gapi.service.account.key.file</name> <value>${gapi.service.account.key}</value> 
+				<regex>^(.*)\/([^\/]*)$</regex> <replacement>$2</replacement> <failIfNoMatch>true</failIfNoMatch> 
+				</configuration> </execution> </executions> </plugin -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -137,14 +123,9 @@
 							<targetPath>WEB-INF</targetPath>
 						</resource>
 						<!-- GAPI key -->
-						<!--resource>
-							<directory>${gapi.service.account.key.dir}</directory>
-							<includes>
-								<include>${gapi.service.account.key.file}</include>
-							</includes>
-							<filtering>false</filtering>
-							<targetPath>WEB-INF/classes</targetPath>
-						</resource-->
+						<!--resource> <directory>${gapi.service.account.key.dir}</directory> 
+							<includes> <include>${gapi.service.account.key.file}</include> </includes> 
+							<filtering>false</filtering> <targetPath>WEB-INF/classes</targetPath> </resource -->
 					</webResources>
 				</configuration>
 			</plugin>
@@ -163,4 +144,11 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>erickzanardo-releases</id>
+			<url>http://erickzanardo.github.com/maven/releases/</url>
+		</repository>
+	</repositories>
 </project>
