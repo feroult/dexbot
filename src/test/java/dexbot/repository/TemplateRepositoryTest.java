@@ -5,6 +5,10 @@ import static org.junit.Assert.assertEquals;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,6 +105,37 @@ public class TemplateRepositoryTest {
 		
 		String merged = repository.mergeTemplate(template);
 		assertEquals("<engine selector='.header'><h1>Great Scott - by: Emmett Brown</h1><engine>", merged);
+	}
 
+	@Test
+	public void testMergedEmail() throws URISyntaxException {
+		TemplateRepository repository = new TemplateRepository();
+		repository.saveBase("<html><head><body><div class='first'></div><div class='second'></div></body></head></html>");
+
+		Template template = new Template();
+		template.setServiceUrl(TemplateRepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
+		template.setTemplate("<engine selector='.first'><h1>Great Scott - by: {{=it.name}}</h1></engine>");
+		repository.save(template);
+
+		template = new Template();
+		template.setServiceUrl(TemplateRepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
+		template.setTemplate("<engine selector='.second'><h2>Great Scott - by: {{=it.name}}</h2></engine>");
+		repository.save(template);
+
+		String email = repository.mergeEmail();
+		
+		Document document = Jsoup.parse(email);
+
+		Elements elements = document.select(".first");
+		assertEquals(1, elements.size());
+		Element child = elements.first().child(0);
+		assertEquals("h1", child.nodeName());
+		assertEquals("Great Scott - by: Emmett Brown", child.text());
+		
+		elements = document.select(".second");
+		assertEquals(1, elements.size());
+		child = elements.first().child(0);
+		assertEquals("h2", child.nodeName());
+		assertEquals("Great Scott - by: Emmett Brown", child.text());
 	}
 }

@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import br.com.ez.DJ;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -117,6 +122,37 @@ public class TemplateRepository {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public String mergeEmail() {
+		
+		String base = findBase();
+		
+		Document document = Jsoup.parse(base);
+
+		List<Template> list = listAll();
+		
+		for (Template template : list) {
+			String mergedTemplate = mergeTemplate(template);
+			
+			Document templateDoc = Jsoup.parse(mergedTemplate);
+			Elements elements = templateDoc.select("engine");
+
+			for (Element element : elements) {
+				String selector = element.attr("selector");
+				
+				Elements docElements = document.select(selector);
+				for (Element docElement : docElements) {
+					Elements children = element.children();
+					
+					for (Element child : children) {
+						docElement.appendChild(child);
+					}
+				}
+			}
+		}
+
+		return document.toString();
 	}
 
 }
