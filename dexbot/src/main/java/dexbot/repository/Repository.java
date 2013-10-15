@@ -17,17 +17,22 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import dexbot.domain.Base;
 import dexbot.domain.Template;
 import dexbot.utils.URLUtils;
 
-public class TemplateRepository {
+public class Repository {
 
-	public void save(Template template) {
+	public void saveTemplate(Template template) {
+		if (template.getBaseKey() == null) {
+			throw new RuntimeException("Base key is required");
+		}
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
 		Entity entity = null;
@@ -38,6 +43,7 @@ public class TemplateRepository {
 			entity = new Entity(template.getKey());
 		}
 
+		entity.setProperty("base_key", template.getBaseKey());
 		entity.setProperty("service_url", template.getServiceUrl());
 		entity.setProperty("template", template.getTemplate());
 
@@ -45,7 +51,7 @@ public class TemplateRepository {
 		template.setKey(key);
 	}
 
-	public Template findByKey(Key key) {
+	public Template findTemplateByKey(Key key) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
 		try {
@@ -57,12 +63,12 @@ public class TemplateRepository {
 		}
 	}
 
-	public List<Template> listAll() {
+	public List<Template> listAll(long baseKey) {
 		List<Template> templates = new ArrayList<Template>();
 
 		DatastoreService service = DatastoreServiceFactory.getDatastoreService();
 
-		Query query = new Query("template");
+		Query query = new Query("template").setFilter(new FilterPredicate("base_key", FilterOperator.EQUAL, baseKey));
 
 		Iterable<Entity> iterable = service.prepare(query).asIterable();
 		Iterator<Entity> iterator = iterable.iterator();
@@ -79,30 +85,38 @@ public class TemplateRepository {
 	private Template entityToTemplate(Entity entity) {
 		String serviceUrl = (String) entity.getProperty("service_url");
 		String templateStr = (String) entity.getProperty("template");
+		long baseKey = (long) entity.getProperty("base_key");
 		Key key = entity.getKey();
 
 		Template template = new Template();
 		template.setKey(key);
 		template.setServiceUrl(serviceUrl);
 		template.setTemplate(templateStr);
+		template.setBaseKey(baseKey);
 		return template;
 	}
 
-	public void saveBase(String base) {
+	public void saveBase(Base base) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
-		Key key = KeyFactory.createKey("template_base", "BASE");
-		Entity entity = new Entity(key);
-		entity.setProperty("base", base);
-		datastoreService.put(entity);
+		Entity entity = null;
+		if (base.getKey() == null) {
+			entity = new Entity("template_base");
+		} else {
+			entity = new Entity(base.getKey());
+		}
+		
+		entity.setProperty("base", base.getBase());
+		entity.setProperty("desc", base.getDesc());
+		Key key = datastoreService.put(entity);
+		base.setKey(key);
 	}
 
-	public String findBase() {
+	public String findBase(Key baseKey) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-		Key key = KeyFactory.createKey("template_base", "BASE");
 
 		try {
-			Entity entity = datastoreService.get(key);
+			Entity entity = datastoreService.get(baseKey);
 			return (String) entity.getProperty("base");
 		} catch (EntityNotFoundException e) {
 			return null;
@@ -124,13 +138,13 @@ public class TemplateRepository {
 		}
 	}
 
-	public String mergeEmail() {
+	public String mergeEmail(Key baseKey) {
 		
-		String base = findBase();
+		String base = findBase(baseKey);
 		
 		Document document = Jsoup.parse(base);
 
-		List<Template> list = listAll();
+		List<Template> list = listAll(baseKey.getId());
 		
 		for (Template template : list) {
 			String mergedTemplate = mergeTemplate(template);

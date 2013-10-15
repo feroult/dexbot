@@ -18,9 +18,10 @@ import com.google.appengine.tools.development.testing.LocalSearchServiceTestConf
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
+import dexbot.domain.Base;
 import dexbot.domain.Template;
 
-public class TemplateRepositoryTest {
+public class RepositoryTest {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(),
 			new LocalDatastoreServiceTestConfig(), new LocalSearchServiceTestConfig()).setEnvIsLoggedIn(true).setEnvAuthDomain("localhost")
@@ -38,43 +39,57 @@ public class TemplateRepositoryTest {
 
 	@Test
 	public void testSaveAndFindTemplate() {
+		Repository repository = new Repository();
+		Base base = new Base();
+		base.setBase("<html></html>");
+		base.setDesc("Some base");
+		repository.saveBase(base);
+		
 		Template template = new Template();
 		template.setServiceUrl("http://someservice.com");
 		template.setTemplate("<engine selector='.header'><h1>{{=it.header}}</h1><engine>");
+		template.setBaseKey(base.getKey().getId());
 
-		TemplateRepository repository = new TemplateRepository();
-		repository.save(template);
+		repository.saveTemplate(template);
 
-		template = repository.findByKey(template.getKey());
+		template = repository.findTemplateByKey(template.getKey());
 		assertEquals("http://someservice.com", template.getServiceUrl());
 		assertEquals("<engine selector='.header'><h1>{{=it.header}}</h1><engine>", template.getTemplate());
 
 		template.setServiceUrl("http://someotherservice.com");
 		template.setTemplate("<engine selector='.footer'><h1>{{=it.header}}</h1><engine>");
-		repository.save(template);
+		repository.saveTemplate(template);
 
-		template = repository.findByKey(template.getKey());
+		template = repository.findTemplateByKey(template.getKey());
 		assertEquals("http://someotherservice.com", template.getServiceUrl());
 		assertEquals("<engine selector='.footer'><h1>{{=it.header}}</h1><engine>", template.getTemplate());
 	}
 
 	@Test
 	public void testSearchTemplates() {
-		TemplateRepository repository = new TemplateRepository();
+		Repository repository = new Repository();
+
+		Base base = new Base();
+		base.setBase("<html></html>");
+		base.setDesc("Some base");
+		repository.saveBase(base);
+
 		Template template = new Template();
 		template.setServiceUrl("http://someservice.com");
 		template.setTemplate("<engine selector='.header'><h1>{{=it.header}}</h1><engine>");
+		template.setBaseKey(base.getKey().getId());
 
-		repository.save(template);
+		repository.saveTemplate(template);
 
 		template = new Template();
 		template.setServiceUrl("http://someotherservice.com");
 		template.setTemplate("<engine selector='.footer'><h1>{{=it.header}}</h1><engine>");
+		template.setBaseKey(base.getKey().getId());
 
-		repository = new TemplateRepository();
-		repository.save(template);
+		repository = new Repository();
+		repository.saveTemplate(template);
 
-		List<Template> result = repository.listAll();
+		List<Template> result = repository.listAll(base.getKey().getId());
 		assertEquals(2, result.size());
 
 		template = result.get(0);
@@ -88,20 +103,29 @@ public class TemplateRepositoryTest {
 
 	@Test
 	public void testSaveAndFindBase() {
-		TemplateRepository repository = new TemplateRepository();
-		repository.saveBase("<html><head><body>Hello dexbot!</body></head></html>");
+		Repository repository = new Repository();
+		Base base = new Base();
+		base.setBase("<html><head><body>Hello dexbot!</body></head></html>");
+		base.setDesc("Some base");
+		repository.saveBase(base);
 
-		String base = repository.findBase();
-		assertEquals("<html><head><body>Hello dexbot!</body></head></html>", base);
+		String baseStr = repository.findBase(base.getKey());
+		assertEquals("<html><head><body>Hello dexbot!</body></head></html>", baseStr);
 	}
 
 	@Test
 	public void testTemplateMerge() throws URISyntaxException {
-		TemplateRepository repository = new TemplateRepository();
+		Repository repository = new Repository();
+
+		Base base = new Base();
+		base.setBase("<html><head><body>Hello dexbot!</body></head></html>");
+		base.setDesc("Some base");
+		repository.saveBase(base);
 
 		Template template = new Template();
-		template.setServiceUrl(TemplateRepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
+		template.setServiceUrl(RepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
 		template.setTemplate("<engine selector='.header'><h1>Great Scott - by: {{=it.name}}</h1><engine>");
+		template.setBaseKey(base.getKey().getId());
 		
 		String merged = repository.mergeTemplate(template);
 		assertEquals("<engine selector='.header'><h1>Great Scott - by: Emmett Brown</h1><engine>", merged);
@@ -109,20 +133,26 @@ public class TemplateRepositoryTest {
 
 	@Test
 	public void testMergedEmail() throws URISyntaxException {
-		TemplateRepository repository = new TemplateRepository();
-		repository.saveBase("<html><head><body><div class='first'></div><div class='second'></div></body></head></html>");
+		Repository repository = new Repository();
+
+		Base base = new Base();
+		base.setBase("<html><head><body><div class='first'></div><div class='second'></div></body></head></html>");
+		base.setDesc("Some base");
+		repository.saveBase(base);
 
 		Template template = new Template();
-		template.setServiceUrl(TemplateRepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
+		template.setServiceUrl(RepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
 		template.setTemplate("<engine selector='.first'><h1>Great Scott - by: {{=it.name}}</h1></engine>");
-		repository.save(template);
+		template.setBaseKey(base.getKey().getId());
+		repository.saveTemplate(template);
 
 		template = new Template();
-		template.setServiceUrl(TemplateRepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
+		template.setServiceUrl(RepositoryTest.class.getClassLoader().getResource("json").toURI().toString());
 		template.setTemplate("<engine selector='.second'><h2>Great Scott - by: {{=it.name}}</h2></engine>");
-		repository.save(template);
+		template.setBaseKey(base.getKey().getId());
+		repository.saveTemplate(template);
 
-		String email = repository.mergeEmail();
+		String email = repository.mergeEmail(base.getKey());
 		
 		Document document = Jsoup.parse(email);
 

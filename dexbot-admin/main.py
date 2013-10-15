@@ -5,7 +5,6 @@ class MainHandler(webapp2.RequestHandler):
     services = {'/services/base': BaseService()}
 
     def process(self, method):
-        print 'Hello'
         if self.request.path in self.services:
             service = self.services[self.request.path]
             if method in service.methods:

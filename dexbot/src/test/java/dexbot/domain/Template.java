@@ -6,6 +6,7 @@ public class Template {
 	private Key key;
 	private String serviceUrl;
 	private String template;
+	private Long baseKey;
 
 	public Key getKey() {
 		return key;
@@ -30,4 +31,13 @@ public class Template {
 	public void setTemplate(String template) {
 		this.template = template;
 	}
+
+	public Long getBaseKey() {
+		return baseKey;
+	}
+
+	public void setBaseKey(Long baseKey) {
+		this.baseKey = baseKey;
+	}
+
 }
