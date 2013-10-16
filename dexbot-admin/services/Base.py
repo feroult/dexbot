@@ -10,7 +10,7 @@ class BaseCrudService:
         baseStr = request.get("base")
         base = json.loads(baseStr);
 
-        id_key = key_name=base['id_key'];
+        id_key = base['id_key'];
         
         k = db.Key.from_path('template_base', int(id_key));
         template_base = db.get(k);
@@ -33,14 +33,14 @@ class BaseListService:
         desc = request.get("desc")
         baseEntity = template_base(desc=desc)
         baseEntity.put();
-        response.headers['Content-Type'] = 'application/json';
+        response.headers['Content-Type'] = 'text/plain';
         response.out.write(str(baseEntity.key().id()));
 
     def get(request, response):
         q = template_base.all();
         result = [];
         
-        for item in q.run(limit=5):
+        for item in q.run():
             result.append({'base': item.base, 'desc': item.desc, 'id_key': str(item.key().id())})
 
         response.headers['Content-Type'] = 'application/json';

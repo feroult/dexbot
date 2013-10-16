@@ -39,10 +39,31 @@
     };
 
     CrudController = function ($scope, $http, $routeParams) {
+        $scope.templates = [];
+
         $http.get('/services/base?id=' + $routeParams.id).success(function (base) {
             $scope.base = base;
         });
 
+        $scope.newTemplate = function () {
+            $scope.editing = {};
+        };
+        
+        $scope.saveTemplate = function() {
+            var template = angular.copy($scope.editing);
+            template.baseKey = $scope.base.id_key;
+            
+            var method = template.id ? 'PUT' : 'POST';
+
+            $http({
+                url: '/services/template',
+                method: method,
+                params: {template: JSON.stringify(template)}
+            }).success(function (template) {
+                $scope.templates.push(template);
+            });
+        };
+        
         $scope.save = function () {
             $http({
                 url: '/services/base',
