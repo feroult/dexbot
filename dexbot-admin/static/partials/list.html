@@ -1,0 +1,37 @@
+<a data-toggle="modal" href="#new-base" class="btn btn-primary btn-sn">New base</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Desc</th>
+        </tr>
+    </thead>
+    <tr ng-repeat="base in bases">
+        <td><a href="#/crud/{{base.id_key}}">{{base.id_key}}</a></td>
+        <td>{{base.desc}}</td>
+    </tr>
+</table>
+
+<div class="modal fade" id="new-base">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">New base template</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Desc:</label>
+                        <input type="text" class="form-control" ng-model="newDesc">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="add()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

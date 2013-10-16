@@ -1,8 +1,10 @@
-from services.Base import BaseService
+from services.Base import BaseCrudService
+from services.Base import BaseListService
 import webapp2
 
 class MainHandler(webapp2.RequestHandler):
-    services = {'/services/base': BaseService()}
+    services = {'/services/base': BaseCrudService(),
+                '/services/base/list': BaseListService()}
 
     def process(self, method):
         if self.request.path in self.services:
