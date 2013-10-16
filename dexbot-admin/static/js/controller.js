@@ -45,6 +45,18 @@
             $scope.base = base;
         });
 
+        $http.get('/services/template?base_key=' + $routeParams.id).success(function (templates) {
+            $scope.templates = templates;
+        });
+
+        $scope.removeTemplate = function(template) {
+            console.log(template);
+        };
+
+        $scope.editTemplate = function(template) {
+            $scope.editing = template;
+        };
+        
         $scope.newTemplate = function () {
             $scope.editing = {};
         };
@@ -53,14 +65,16 @@
             var template = angular.copy($scope.editing);
             template.baseKey = $scope.base.id_key;
             
-            var method = template.id ? 'PUT' : 'POST';
+            var method = template.id_key ? 'PUT' : 'POST';
 
             $http({
                 url: '/services/template',
                 method: method,
                 params: {template: JSON.stringify(template)}
             }).success(function (template) {
-                $scope.templates.push(template);
+                if (method == 'POST') {
+                    $scope.templates.push(template);
+                }
             });
         };
         
