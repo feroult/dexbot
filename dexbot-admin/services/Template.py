@@ -2,8 +2,8 @@ from google.appengine.ext import db
 import json
 
 class template(db.Model):
-    service_url = db.StringProperty(required=False, multiline=True)
-    template = db.StringProperty(required=True)
+    service_url = db.StringProperty(required=False)
+    template = db.StringProperty(required=True, multiline=True)
     base_key = db.IntegerProperty(required=True)
 
 
