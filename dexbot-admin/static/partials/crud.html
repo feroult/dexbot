@@ -5,7 +5,7 @@
     </div>
     <div class="col-md-6">
         <div ng-repeat="template in templates">
-            <span class="glyphicon glyphicon-remove" ng-click="removeTemplate(template)"></span>
+            <a class="glyphicon glyphicon-remove" ng-click="removeTemplate(template)" href="javascript:void(0)"></a>
             <a class="glyphicon glyphicon-edit" ng-click="editTemplate(template)" data-toggle="modal" href="#edit-template"></a>
             <ul class="list-unstyled">
                 <li>

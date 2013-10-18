@@ -50,7 +50,18 @@
         });
 
         $scope.removeTemplate = function(template) {
-            console.log(template);
+            $http.delete('/services/template?id_key=' + template.id_key).success(function() {
+                var newArray = [];
+                
+                for (var i = 0; i < $scope.templates.length; i++) {
+                    var t = $scope.templates[i];
+                    if (t.id_key == template.id_key) {
+                        continue;
+                    }
+                    newArray.push(t);
+                }
+                $scope.templates = newArray;
+            });
         };
 
         $scope.editTemplate = function(template) {
