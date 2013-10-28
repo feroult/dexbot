@@ -4,13 +4,18 @@ function doGetX() {
 
 function doGet() {
 	var chart = getChart();
-
-	sendMail(chart);
+	var image = getImage();
+	
+	sendMail(image);
 
 	var uiApp = UiApp.createApplication().setTitle("My Chart");
 	uiApp.add(chart);
 	return uiApp;
 
+}
+
+function getImage() {
+	return UrlFetchApp.fetch("https://docs.google.com/a/dextra-sw.com/spreadsheet/oimg?key=0AiEZezeUULf3dGp4NUlnRnp3RVh6dEdpX3cxTFFFN1E&oid=1&zx=efkcv480nfy0").getBlob();
 }
 
 function getChartFromSpreadsheet() {
@@ -24,7 +29,7 @@ function getChartFromSpreadsheet() {
 	return charts[0];
 }
 
-function sendMail(chart) {
+function sendMail(blob) {
 	MailApp
 			.sendEmail({
 				to : "fernando@dextra-sw.com",
@@ -33,7 +38,7 @@ function sendMail(chart) {
 						+ "inline YouTube Logo <img src='cid:chartImage'> <br>"
 						+ "xxxx <img src='http://www.gravatar.com/avatar/3b174eda6e08157adaa9794294e53702.png?s=200' />",
 				inlineImages : {
-					chartImage : chart.getBlob()
+					chartImage : blob
 				}
 			});
 }
