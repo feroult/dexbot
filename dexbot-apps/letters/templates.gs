@@ -51,6 +51,11 @@ var Templates = (function() {
 			return UrlFetchApp.fetch(body).toString();
 		}
 		
+		if(body.toLowerCase().indexOf("docs://") == 0) {
+			var key = body.substring(7);			
+			return DocumentApp.openById(key).getBody().getText();
+		}
+		
 		return body;
 	}
 	
@@ -78,4 +83,16 @@ function testStringTemplate() {
 	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
 }
 
+
+function testDocsTemplate() {
+	Blobs.register(mockSimpleBlob);
+	
+	var template = Templates.parse('docs://1QIKt9i8br8_UFwt19YpCBuwh_XgB9fXWGcCl8rH1OF8');
+	
+	Logger.log(template.body);
+	Logger.log(template.blobs);
+	
+	GSUnit.assertNotNull(template.blobs['mockSimpleBlob']);
+	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
+}
 
