@@ -1,6 +1,6 @@
 var Tests = (function() {
 
-	function mockSimpleBlob() {
+	function xpto() {
 		var data = Charts.newDataTable().addColumn(Charts.ColumnType.STRING,
 				"Month").addColumn(Charts.ColumnType.NUMBER, "In Store")
 				.addColumn(Charts.ColumnType.NUMBER, "Online").addRow(
@@ -15,7 +15,7 @@ var Tests = (function() {
 
 	return {
 		testSimpleLetter : function() {
-			Letters.init(mockSimpleBlob);
+			Letters.init(xpto);
 			Letters.send('fernando@dextra-sw.com', 'xpto.html');
 		}
 	};
