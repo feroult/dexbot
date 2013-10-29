@@ -1,7 +1,5 @@
 var Templates = (function() {
 
-	var base_url = 'https://raw.github.com/feroult/dexbot/master/dexbot-apps/letters/templates/';
-
 	function Template(body) {
 		this.body = body;
 		this.blobs = {};
@@ -48,20 +46,41 @@ var Templates = (function() {
 		template.body = parsedBody.join('\n');
 	}
 
-	function fetch(url) {
-		var template = new Template(UrlFetchApp.fetch(base_url + url).toString());
+	function fetch(body) {
+		if(body.toLowerCase().indexOf("http") == 0) {
+			return UrlFetchApp.fetch(body).toString();
+		}
+		
+		return body;
+	}
+	
+	function parse(body) {
+		var template = new Template(fetch(body));
 		parseBlobs(template);
 		return template;
 	}
 
 	return {
-		fetch : fetch
+		parse : parse
 	}
 
 })();
 
-function test() {
-	var template = Templates.fetch('xpto.html');
+function testStringTemplate() {
+	Blobs.register(mockSimpleBlob);
+	
+	var template = Templates.parse('<div><img src="$blob(\'mockSimpleBlob\')" />');
+	
+	Logger.log(template.body);
+	Logger.log(template.blobs);
+	
+	GSUnit.assertNotNull(template.blobs['mockSimpleBlob']);
+	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
+}
+
+
+function testHttpTemplate() {
+	var template = Templates.parse('https://raw.github.com/feroult/dexbot/master/dexbot-apps/letters/templates/xpto.html');
 	
 	Logger.log(template.body);
 	Logger.log(template.blobs);

@@ -2,7 +2,7 @@ var Letters = {
 
 	init : function() {
 		for (var i = 0; i < arguments.length; i++) {
-			Blobs.register(arguments[i].name, arguments[i]);
+			Blobs.register(arguments[i]);
 		}
 	},
 
@@ -17,5 +17,9 @@ var Letters = {
 		});
 
 	}
+}
 
+function testSimpleLetter() {
+	Letters.init(mockSimpleBlob);
+	Letters.send('fernando@dextra-sw.com', 'xpto.html');
 }

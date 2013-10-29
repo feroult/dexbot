@@ -2,8 +2,8 @@ var Blobs = (function() {
 
 	var blobFunctions = {};
 
-	function register(blobKey, blobFunction) {
-		blobFunctions[blobKey] = blobFunction;
+	function register(blobFunction) {
+		blobFunctions[blobFunction.name] = blobFunction;
 	}
 
 	function fromFunction(blobKey) {
