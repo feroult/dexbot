@@ -1,54 +1,29 @@
-var TemplateApp = (function() {
-
-	var base_url = 'https://raw.github.com/feroult/dexbot/master/dexbot-apps/letters/templates/';
-
-	function Template(body) {
-		this.body = body;
-		this.blobs = {};
-		this.parseBlobs = function() {
-
-			var lines = body.split(/\r?\n/);
-
-			var regexpBlobFunction = /.*\$blob\(\s*(\'[^\']*\')\s*\,\s*(\'[^\']*\')\s*\).*/g;
-			var regexpBlobUrl = /.*\$blob\(\s*(\'[^\']*\')\s*\).*/g;
-
-			for (var i = 0; i < lines.length; i++) {
-
-				var result = lines[i].match(regexpBlobFunction);
-				if (result != null) {
-					var blob = result[0];
-					blobs[blob] = blob;
-					continue;
-				}
-
-				result = lines[i].match(regexpBlobUrl);
-				if (result != null) {
-					var blob = result[0];
-					var url = result[1];
-					blobs[blob] = url;
-					continue;
-				}
-			}
-		};
-	}
-
-	return {
-		fetch : function(url) {
-			var template = new Template(UrlFetchApp.fetch(base_url + url).toString());
-			template.parseBlobs();
-			return template;
-		}
-	};
-})();
-
 var Letters = {
 
-	send : function(template) {
+	init : function() {
+		for (var i = 0; i < arguments.length; i++) {
+			Blobs.register(arguments[i].name, arguments[i]);
+		}
+	},
 
+	send : function(to, templateUrl) {
+
+		var template = Templates.fetch(templateUrl);
+		
+		
+		
+		MailApp
+		.sendEmail({
+			to : "fernando@dextra-sw.com",
+			subject : "Test Mail",
+			htmlBody : "inline Google Logo<img src='cid:chartImage'> images! <br>"
+					+ "inline YouTube Logo <img src='cid:chartImage'> <br>"
+					+ "xxxx <img src='http://www.gravatar.com/avatar/3b174eda6e08157adaa9794294e53702.png?s=200' />",
+			inlineImages : {
+				chartImage : blob
+			}
+		});		
+		
 	}
 
-};
-
-function test() {
-	Logger.log(TemplateApp.fetch('xpto.html'));
 }
