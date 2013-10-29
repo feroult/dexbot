@@ -7,7 +7,7 @@ var Letters = {
 	},
 
 	send : function(to, templateUrl) {
-		var template = Templates.fetch(templateUrl);
+		var template = Templates.parse(templateUrl);
 
 		MailApp.sendEmail({
 			to : to,
@@ -21,5 +21,5 @@ var Letters = {
 
 function testSimpleLetter() {
 	Letters.init(mockSimpleBlob);
-	Letters.send('fernando@dextra-sw.com', 'xpto.html');
+	Letters.send('fernando@dextra-sw.com', '<img src="$blob(\'mockSimpleBlob\')" />');
 }

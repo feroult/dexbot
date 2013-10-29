@@ -79,14 +79,3 @@ function testStringTemplate() {
 }
 
 
-function testHttpTemplate() {
-	var template = Templates.parse('https://raw.github.com/feroult/dexbot/master/dexbot-apps/letters/templates/xpto.html');
-	
-	Logger.log(template.body);
-	Logger.log(template.blobs);
-	
-	GSUnit.assertNotUndefined(template.blobs['gravatar']);
-	GSUnit.assertNotUndefined(template.blobs['xpto']);	
-	GSUnit.assertTrue(template.body.indexOf('cid:gravatar') != -1);
-	GSUnit.assertTrue(template.body.indexOf('cid:xpto') != -1);
-}
