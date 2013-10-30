@@ -71,6 +71,12 @@ var Templates = (function() {
 
 })();
 
+function testAll() {
+	testStringTemplate();
+	testDocsTemplate();
+	testHttpTemplate();
+}
+
 function testStringTemplate() {
 	Blobs.register(mockSimpleBlob);
 	assertTemplate(Templates.parse('<div><img src="$blob(\'mockSimpleBlob\')" />'));
@@ -84,7 +90,7 @@ function testDocsTemplate() {
 
 function testHttpTemplate() {
 	Blobs.register(mockSimpleBlob);
-	assertTemplate(Templates.parse('docs://1QIKt9i8br8_UFwt19YpCBuwh_XgB9fXWGcCl8rH1OF8'));
+	assertTemplate(Templates.parse('https://raw.github.com/feroult/dexbot/master/dexbot-apps/letters/test/template.html'));
 }
 
 function assertTemplate(template) {
