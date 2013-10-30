@@ -47,18 +47,18 @@ var Templates = (function() {
 	}
 
 	function fetch(body) {
-		if(body.toLowerCase().indexOf("http") == 0) {
+		if (body.toLowerCase().indexOf("http") == 0) {
 			return UrlFetchApp.fetch(body).toString();
 		}
-		
-		if(body.toLowerCase().indexOf("docs://") == 0) {
-			var key = body.substring(7);			
+
+		if (body.toLowerCase().indexOf("docs://") == 0) {
+			var key = body.substring(7);
 			return DocumentApp.openById(key).getBody().getText();
 		}
-		
+
 		return body;
 	}
-	
+
 	function parse(body) {
 		var template = new Template(fetch(body));
 		parseBlobs(template);
@@ -73,26 +73,23 @@ var Templates = (function() {
 
 function testStringTemplate() {
 	Blobs.register(mockSimpleBlob);
-	
-	var template = Templates.parse('<div><img src="$blob(\'mockSimpleBlob\')" />');
-	
-	Logger.log(template.body);
-	Logger.log(template.blobs);
-	
-	GSUnit.assertNotNull(template.blobs['mockSimpleBlob']);
-	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
+	assertTemplate(Templates.parse('<div><img src="$blob(\'mockSimpleBlob\')" />'));
 }
 
 
 function testDocsTemplate() {
 	Blobs.register(mockSimpleBlob);
-	
-	var template = Templates.parse('docs://1QIKt9i8br8_UFwt19YpCBuwh_XgB9fXWGcCl8rH1OF8');
-	
+	assertTemplate(Templates.parse('docs://1QIKt9i8br8_UFwt19YpCBuwh_XgB9fXWGcCl8rH1OF8'));
+}
+
+function testHttpTemplate() {
+	Blobs.register(mockSimpleBlob);
+	assertTemplate(Templates.parse('docs://1QIKt9i8br8_UFwt19YpCBuwh_XgB9fXWGcCl8rH1OF8'));
+}
+
+function assertTemplate(template) {
 	Logger.log(template.body);
-	Logger.log(template.blobs);
-	
+	Logger.log(template.blobs);	
 	GSUnit.assertNotNull(template.blobs['mockSimpleBlob']);
 	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
 }
-
