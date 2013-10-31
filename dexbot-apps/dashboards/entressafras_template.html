@@ -1,9 +1,3 @@
-<? var persons = SpreadsheetApp
-    .openById('0AiEZezeUULf3dFJ6cnEtN3NTYjhIVGgtQW9PdHByVlE')
-    .getSheetByName('filter')
-    .getRange("B5:C9")
-    .getValues(); ?>
- 
 <html>
      <head>
           <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
@@ -79,14 +73,17 @@
 
     <body>	
         <ul>        
-            <? for (var i = 0; i < persons.length; i++) {         
+            <?
+            var persons = entressafras();            
+                        
+            for (var i = 0; i < 5; i++) {         
                 var name = persons[i][0];
                 var email = persons[i][1];     
                                                 
                 if(name == "") { 
-                    break;
+                     break;
                 }
-                                
+                               
                 name = name.split(' ')[0];
             ?>          
               <li>          
