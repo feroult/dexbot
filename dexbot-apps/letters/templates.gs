@@ -1,8 +1,24 @@
 var Templates = (function() {
 
 	function Template(body) {
-		this.body = body;
+		this.unparsed = body;
+		this.parsed = null;
 		this.blobs = {};
+
+		this.parse = function() {
+			var tempFn = doT.template(this.unparsed);
+			this.parsed = tempFn(this);			
+		}
+		
+		this.fn = function(blobFunction) {
+			return this.addBlob(Blobs.fromFunction(blobFunction));
+		}
+		
+		this.addBlob = function(blob) {
+			var nextId = 'blob' + (Object.keys(this.blobs).length + 1);
+			this.blobs[nextId] = blob;
+			return 'cid:' + nextId;
+		} 
 	}
 
 	function loadBlob(template, line) {
@@ -61,7 +77,8 @@ var Templates = (function() {
 
 	function parse(body) {
 		var template = new Template(fetch(body));
-		parseBlobs(template);
+		template.parse();
+		//parseBlobs(template);
 		return template;
 	}
 
@@ -77,11 +94,19 @@ function testAll() {
 	testHttpTemplate();
 }
 
+function testFunctionBlob() {
+	Blobs.register(mockSimpleBlob);
+
+	var template = Templates.parse('<img src="{{= it.fn(\'mockSimpleBlob\') }}" />');
+
+	GSUnit.assertEquals('<img src="cid:blob1" />', template.parsed);
+	GSUnit.assertNotNull(template.blobs['blob1']);
+}
+
 function testStringTemplate() {
 	Blobs.register(mockSimpleBlob);
 	assertTemplate(Templates.parse('<div><img src="$blob(\'mockSimpleBlob\')" />'));
 }
-
 
 function testDocsTemplate() {
 	Blobs.register(mockSimpleBlob);
@@ -95,7 +120,7 @@ function testHttpTemplate() {
 
 function assertTemplate(template) {
 	Logger.log(template.body);
-	Logger.log(template.blobs);	
+	Logger.log(template.blobs);
 	GSUnit.assertNotNull(template.blobs['mockSimpleBlob']);
 	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
 }
