@@ -12,7 +12,7 @@ var Letters = {
 		MailApp.sendEmail({
 			to : to,
 			subject : "Test Mail",
-			htmlBody : template.body,
+			htmlBody : template.parsed,
 			inlineImages : template.blobs
 		});
 
@@ -21,7 +21,5 @@ var Letters = {
 
 function testSimpleLetter() {
 	Letters.init(mockSimpleBlob);
-	//Letters.send('fernando@dextra-sw.com', '<img src="$blob(\'mockSimpleBlob\')" />');
 	Letters.send('fernando@dextra-sw.com', 'docs://1QIKt9i8br8_UFwt19YpCBuwh_XgB9fXWGcCl8rH1OF8');
-	
 }

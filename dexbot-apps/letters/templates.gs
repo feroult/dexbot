@@ -25,47 +25,6 @@ var Templates = (function() {
 		} 
 	}
 
-	function loadBlob(template, line) {
-		var regexpBlobUrl = /.*\$blob\(\s*\'([^\']*)\'\s*\,\s*\'([^\']*)\'\s*\).*/;
-		var regexpBlobFunction = /.*\$blob\(\s*\'([^\']*)\'\s*\).*/;
-
-		var result = line.match(regexpBlobFunction);
-		if (result != null) {
-			var blobKey = result[1];
-			template.blobs[blobKey] = Blobs.fromFunction(blobKey);
-			return blobKey;
-		}
-
-		result = line.match(regexpBlobUrl);
-		if (result != null) {
-			var blobKey = result[1];
-			var url = result[2];
-			template.blobs[blobKey] = Blobs.fromUrl(url);
-			return blobKey;
-		}
-
-		return null;
-	}
-
-	function parseBlobs(template) {
-		var parsedBody = [];
-		var lines = template.body.split(/\r?\n/);
-
-		for (var i = 0; i < lines.length; i++) {
-			var line = lines[i];
-
-			var blobKey = loadBlob(template, line);
-
-			if (blobKey) {
-				parsedBody.push(line.replace(/\$blob\(.*\)/g, 'cid:' + blobKey));
-				continue;
-			}
-			parsedBody.push(line);
-		}
-
-		template.body = parsedBody.join('\n');
-	}
-
 	function fetch(body) {
 		if (body.toLowerCase().indexOf("http") == 0) {
 			return UrlFetchApp.fetch(body).toString();
@@ -82,7 +41,6 @@ var Templates = (function() {
 	function parse(body) {
 		var template = new Template(fetch(body));
 		template.parse();
-		//parseBlobs(template);
 		return template;
 	}
 
@@ -93,7 +51,7 @@ var Templates = (function() {
 })();
 
 function testAll() {
-	testFunctioBlob();
+	testFunctionBlob();
 	testUrlBlob();
 	testDocsTemplate();
 	testHttpTemplate();
@@ -126,8 +84,10 @@ function testHttpTemplate() {
 }
 
 function assertTemplate(template) {
-	Logger.log(template.body);
+	Logger.log(template.parsed);
 	Logger.log(template.blobs);
-	GSUnit.assertNotNull(template.blobs['mockSimpleBlob']);
-	GSUnit.assertTrue(template.body.indexOf('cid:mockSimpleBlob') != -1);
+	GSUnit.assertNotNull(template.blobs['blob1']);
+	GSUnit.assertNotNull(template.blobs['blob2']);
+	GSUnit.assertTrue(template.parsed.indexOf('cid:blob1') != -1);
+	GSUnit.assertTrue(template.parsed.indexOf('cid:blob2') != -1);
 }
