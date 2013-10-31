@@ -14,6 +14,10 @@ var Templates = (function() {
 			return this.addBlob(Blobs.fromFunction(blobFunction));
 		}
 		
+		this.url = function(url) {
+			return this.addBlob(Blobs.fromUrl(url));
+		}
+		
 		this.addBlob = function(blob) {
 			var nextId = 'blob' + (Object.keys(this.blobs).length + 1);
 			this.blobs[nextId] = blob;
@@ -89,7 +93,8 @@ var Templates = (function() {
 })();
 
 function testAll() {
-	testStringTemplate();
+	testFunctioBlob();
+	testUrlBlob();
 	testDocsTemplate();
 	testHttpTemplate();
 }
@@ -103,9 +108,11 @@ function testFunctionBlob() {
 	GSUnit.assertNotNull(template.blobs['blob1']);
 }
 
-function testStringTemplate() {
-	Blobs.register(mockSimpleBlob);
-	assertTemplate(Templates.parse('<div><img src="$blob(\'mockSimpleBlob\')" />'));
+function testUrlBlob() {
+	var template = Templates.parse('<img src="{{= it.url(\'https://raw.github.com/feroult/dexbot/master/dexbot-apps/letters/test/bumblebee.jpg\') }}" />');
+
+	GSUnit.assertEquals('<img src="cid:blob1" />', template.parsed);
+	GSUnit.assertNotNull(template.blobs['blob1']);	
 }
 
 function testDocsTemplate() {
