@@ -1,0 +1,53 @@
+<style type="text/css">
+.circle {
+	text-align: center;
+	background-color: green;
+	width: 200px;
+	height: 200px;
+    line-height: 200px;    
+	border-radius: 100px;
+    font-size: 40px;
+    float: left;
+    margin: 20px;
+}
+</style>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script>
+	var baloons = {};
+
+	baloons.init = function() {
+		$('.circle').each(function(index) {
+			var d = Math.floor((Math.random()*10)+1) * 50; 
+			$(this).css('width', d + 'px');
+			$(this).css('height', d + 'px');
+			$(this).css('line-height', d + 'px');
+			$(this).css('border-radius', (d/2) + 'px');
+		});
+	};
+</script>
+
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+<div class="circle">x</div>
+
+<button onclick="baloons.init();">Init</button>
